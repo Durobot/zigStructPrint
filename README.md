@@ -21,8 +21,8 @@ To use, either drop [zsp.zig](https://github.com/Durobot/zigStructPrint/blob/mai
    ```zig
    const zsp = b.dependency("zigStructPrint",
    .{
-   	.target = target,
-   	.optimize = optimize,
+       .target = target,
+       .optimize = optimize,
    });
    exe.root_module.addImport("zigStructPrint", zsp.module("zigStructPrint"));
    ```
@@ -32,6 +32,8 @@ Build with `zig build`, as you normally do.
 Actually printing out your struct:
 
 ```zig
+const zsp = @import("zigStructPrint");
+. . .
 const MyStruct = struct
 {
     a: i8 = -10,
