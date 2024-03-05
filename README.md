@@ -1,4 +1,5 @@
-# zigStructPrint
+zigStructPrint
+
 Small library to pretty-print Zig structs (and arrays)
 
 **zigStructPrint** is licensed under under [the MIT License](https://en.wikipedia.org/w/index.php?title=MIT_License&useskin=vector) and available from https://github.com/Durobot/zigStructPrint
@@ -46,3 +47,14 @@ const ms = MyStruct {};
 zsp.printStruct(ms, true, 0); // try `false` to get full type names
 ```
 
+And the output is:
+
+```zig
+{
+    a: i8 = -10
+    b: u32 = 10
+    c: [3]u8 = [ 1, 2, 3, ]
+    d: [2]Nested = [ { f: f32 = 10, g: []const u8 = "Hello", }, { f: f32 = -20, g: []const u8 = "Bye", }, ]
+    e: [3]Color = [ red, green, yellow, ]
+}
+```
