@@ -4,6 +4,8 @@ Small library to pretty-print Zig structs (and arrays)
 
 **zigStructPrint** is licensed under under [the MIT License](https://en.wikipedia.org/w/index.php?title=MIT_License&useskin=vector) and available from https://github.com/Durobot/zigStructPrint
 
+Please note that only Zig **0.14.0-dev.1421+f87dd43c1** (give or take) and up is supported because of [this breaking change](https://github.com/ziglang/zig/commit/0fe3fd01ddc2cd49c6a2b939577d16b9d2c65ea9) in the Zig standard library. If you need zigStructPrint for an earlier version of Zig, get [this version](https://github.com/Durobot/zigStructPrint/releases/tag/v0.1-beta) instead.
+
 To use, either drop [zsp.zig](https://github.com/Durobot/zigStructPrint/blob/main/src/zsp.zig) into your project, or, if you prefer Zig package manager:
 
 1. In `build.zig.zon`, in `.dependencies`, add

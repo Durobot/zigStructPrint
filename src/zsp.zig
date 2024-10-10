@@ -27,32 +27,32 @@ const std = @import("std");
 pub fn printStruct(s: anytype, shorten_types: bool, indent: comptime_int) void
 {
     const s_type_info = @typeInfo(@TypeOf(s));
-    if (s_type_info != .Struct)
+    if (s_type_info != .@"struct")
         @compileError("fn printStruct: `s` is " ++ @typeName(s) ++ " , expected a struct");
 
     const ind_str = "    " ** indent;
     const ind_str_2 = "    " ** (indent + 1);
     std.debug.print("{s}{{\n", .{ ind_str });
     var name_buf = [_]u8 { 0 } ** 100;
-    inline for (s_type_info.Struct.fields) |fld|
+    inline for (s_type_info.@"struct".fields) |fld|
         switch (@typeInfo(fld.type))
         {
-            .Int, .Float, .ComptimeInt, .ComptimeFloat =>
+            .int, .float, .comptime_int, .comptime_float =>
                 std.debug.print("{s}{s}{s}: {s} = {d}\n",
                                 .{ ind_str_2, if (fld.is_comptime) "comptime " else "",
                                    fld.name, @typeName(fld.type), @field(s, fld.name) }),
-            .Bool =>
+            .bool =>
                 std.debug.print("{s}{s}{s}: {s} = {}\n",
                                 .{ ind_str_2, if (fld.is_comptime) "comptime " else "",
                                    fld.name, @typeName(fld.type), @field(s, fld.name) }),
-            .Struct =>
+            .@"struct" =>
             {
                 std.debug.print("{s}{s}{s}: {s} =\n",
                                 .{ ind_str_2, if (fld.is_comptime) "comptime " else "",
                                    fld.name, typeName(@typeName(fld.type), &name_buf, shorten_types) });
                 printStruct(@field(s, fld.name), shorten_types, indent + 1);
             },
-            .Array =>
+            .array =>
             {
                 std.debug.print("{s}{s}{s}: {s} = [ ",
                                 .{ ind_str_2, if (fld.is_comptime) "comptime " else "",
@@ -60,7 +60,7 @@ pub fn printStruct(s: anytype, shorten_types: bool, indent: comptime_int) void
                 printArray(@field(s, fld.name), shorten_types);
                 std.debug.print("]\n", .{});
             },
-            .Pointer => |ptr_type_info|
+            .pointer => |ptr_type_info|
             {
                 switch (ptr_type_info.size)
                 {
@@ -85,10 +85,10 @@ pub fn printStruct(s: anytype, shorten_types: bool, indent: comptime_int) void
                         }
                 }
             },
-            .Enum => std.debug.print("{s}{s}{s}: {s} = {s}\n",
-                                    .{ ind_str_2, if (fld.is_comptime) "comptime " else "",
-                                       fld.name, typeName(@typeName(fld.type), &name_buf, shorten_types),
-                                       @tagName(@field(s, fld.name)) }),
+            .@"enum" => std.debug.print("{s}{s}{s}: {s} = {s}\n",
+                                        .{ ind_str_2, if (fld.is_comptime) "comptime " else "",
+                                           fld.name, typeName(@typeName(fld.type), &name_buf, shorten_types),
+                                           @tagName(@field(s, fld.name)) }),
             else => std.debug.print("{s}{s}{s}: {s} = -\n",
                                     .{ ind_str_2, if (fld.is_comptime) "comptime " else "", fld.name,
                                        typeName(@typeName(fld.type), &name_buf, shorten_types) }),
@@ -99,30 +99,30 @@ pub fn printStruct(s: anytype, shorten_types: bool, indent: comptime_int) void
 pub fn printStructInline(s: anytype, shorten_types: bool) void
 {
     const s_type_info = @typeInfo(@TypeOf(s));
-    if (s_type_info != .Struct)
+    if (s_type_info != .@"struct")
         @compileError("fn printStructInline: `s` is " ++ @typeName(s) ++ " , expected a struct");
 
     std.debug.print("{{ ", .{});
     var name_buf = [_]u8 { 0 } ** 100;
-    inline for (s_type_info.Struct.fields) |fld|
+    inline for (s_type_info.@"struct".fields) |fld|
         switch (@typeInfo(fld.type))
         {
-            .Int, .Float, .ComptimeInt, .ComptimeFloat =>
+            .int, .float, .comptime_int, .comptime_float =>
                 std.debug.print("{s}{s}: {s} = {d}, ",
                                 .{ if (fld.is_comptime) "comptime " else "",
                                    fld.name, @typeName(fld.type), @field(s, fld.name) }),
-            .Bool =>
+            .bool =>
                 std.debug.print("{s}{s}: {s} = {}, ",
                                 .{ if (fld.is_comptime) "comptime " else "",
                                    fld.name, @typeName(fld.type), @field(s, fld.name) }),
-            .Struct =>
+            .@"struct" =>
             {
                 std.debug.print("{s}{s}: {s} = ",
                                 .{ if (fld.is_comptime) "comptime " else "",
                                    fld.name, typeName(@typeName(fld.type), &name_buf, shorten_types) });
                 printStruct(@field(s, fld.name), 0, true);
             },
-            .Array =>
+            .array =>
             {
                 std.debug.print("{s}{s}: {s} = [ ",
                                 .{ if (fld.is_comptime) "comptime " else "",
@@ -130,7 +130,7 @@ pub fn printStructInline(s: anytype, shorten_types: bool) void
                 printArray(@field(s, fld.name), shorten_types);
                 std.debug.print("], ", .{});
             },
-            .Pointer => |ptr_type_info|
+            .pointer => |ptr_type_info|
             {
                 switch (ptr_type_info.size)
                 {
@@ -155,10 +155,10 @@ pub fn printStructInline(s: anytype, shorten_types: bool) void
                         }
                 }
             },
-            .Enum => std.debug.print("{s}{s}: {s} = {s}, ",
-                                    .{ if (fld.is_comptime) "comptime " else "",
-                                       fld.name, typeName(@typeName(fld.type), &name_buf, shorten_types),
-                                       @tagName(@field(s, fld.name)) }),
+            .@"enum" => std.debug.print("{s}{s}: {s} = {s}, ",
+                                        .{ if (fld.is_comptime) "comptime " else "",
+                                           fld.name, typeName(@typeName(fld.type), &name_buf, shorten_types),
+                                           @tagName(@field(s, fld.name)) }),
             else => std.debug.print("{s}{s}: {s} = -, ",
                                     .{ if (fld.is_comptime) "comptime " else "", fld.name,
                                        typeName(@typeName(fld.type), &name_buf, shorten_types) }),
@@ -169,11 +169,11 @@ pub fn printStructInline(s: anytype, shorten_types: bool) void
 pub fn printArray(a: anytype, shorten_types: bool) void
 {
     const a_type_info = @typeInfo(@TypeOf(a));
-    if (a_type_info != .Array and
-        (a_type_info != .Pointer or a_type_info.Pointer.size != .Slice))
+    if (a_type_info != .array and
+        (a_type_info != .pointer or a_type_info.pointer.size != .Slice))
         @compileError("fn printArray: `a` is " ++ @typeName(a) ++ " , expected an array or a slice");
 
-    if (a_type_info == .Pointer and a_type_info.Pointer.child == u8 and a_type_info.Pointer.is_const)
+    if (a_type_info == .pointer and a_type_info.pointer.child == u8 and a_type_info.pointer.is_const)
     {
         std.debug.print("\"{s}\" ", .{a});
         return;
@@ -182,17 +182,17 @@ pub fn printArray(a: anytype, shorten_types: bool) void
     for (a) |e|
         switch (@typeInfo(@TypeOf(e)))
         {
-            .Int, .Float, .ComptimeInt, .ComptimeFloat =>
+            .int, .float, .comptime_int, .comptime_float =>
                 std.debug.print("{d}, ", .{ e }),
-            .Bool => std.debug.print("{}, ", .{ e }),
-            .Array =>
+            .bool => std.debug.print("{}, ", .{ e }),
+            .array =>
             {
                 std.debug.print("[ ", .{});
                 printArray(e, shorten_types);
                 std.debug.print("], ", .{});
             },
-            .Struct => printStructInline(e, shorten_types),
-            .Pointer => |ptr_info|
+            .@"struct" => printStructInline(e, shorten_types),
+            .pointer => |ptr_info|
                 if (ptr_info.size == .Slice)
                 {
                     std.debug.print("[ ", .{});
@@ -201,7 +201,7 @@ pub fn printArray(a: anytype, shorten_types: bool) void
                 }
                 else
                     std.debug.print("-, ", .{}),
-            .Enum => std.debug.print("{s}, ", .{ @tagName(e) }),
+            .@"enum" => std.debug.print("{s}, ", .{ @tagName(e) }),
             else => std.debug.print("-, ", .{}),
         };
 }
